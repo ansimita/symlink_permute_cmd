@@ -56,6 +56,7 @@ class SymlinkPermuteTests(unittest.TestCase):
 
         link = bin / 'sl'
         self.assertTrue(link.exists())
+        self.assertTrue(link.is_symlink())
         self.assertEqual(link.resolve(), Path('/bin/ls'))
 
         link.unlink()
@@ -73,6 +74,7 @@ class SymlinkPermuteTests(unittest.TestCase):
 
         link = bin / 'mr'
         self.assertTrue(link.exists())
+        self.assertTrue(link.is_symlink())
         self.assertEqual(link.resolve(), Path('/bin/rm'))
 
         link.unlink()
@@ -90,6 +92,7 @@ class SymlinkPermuteTests(unittest.TestCase):
 
         link = bin / 'vm'
         self.assertTrue(link.exists())
+        self.assertTrue(link.is_symlink())
         self.assertEqual(link.resolve(), Path('/bin/mv'))
 
         r = run(['./symlink_permute_cmd', 'vm'])
@@ -111,6 +114,7 @@ class SymlinkPermuteTests(unittest.TestCase):
 
         link = symlink_at / 'hs'
         self.assertTrue(link.exists())
+        self.assertTrue(link.is_symlink())
         self.assertEqual(link.resolve(), Path('/bin/sh'))
 
         link.unlink()
@@ -129,6 +133,7 @@ class SymlinkPermuteTests(unittest.TestCase):
 
         link = symlink_at / 'pc'
         self.assertTrue(link.exists())
+        self.assertTrue(link.is_symlink())
         self.assertEqual(link.resolve(), Path('/bin/cp'))
 
         link.unlink()
