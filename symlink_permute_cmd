@@ -1,0 +1,71 @@
+#!/usr/bin/env python3
+
+# Copyright (c) 2020 ansimita
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+from pathlib import Path
+
+import argparse
+import errno
+import itertools
+import shutil
+import sys
+
+parser = argparse.ArgumentParser()
+parser.add_argument('command')
+parser.add_argument('-s', '--symlink-at', metavar='path')
+
+args = parser.parse_args()
+
+command = shutil.which(args.command)
+if not command:
+    print(f'{args.command}: command not found', file=sys.stderr)
+    sys.exit(127)
+
+if args.symlink_at:
+    symlink_at = Path(args.symlink_at)
+else:
+    symlink_at = Path.home() / 'bin'
+    if not symlink_at.exists() or not symlink_at.is_dir():
+        symlink_at = Path.home() / '.local' / 'bin'
+
+if not symlink_at.exists():
+    symlink_at.mkdir(parents=True)
+    print(f'Created private bin directory at {symlink_at}')
+    print(f'Please add {symlink_at} to your $PATH')
+
+if not symlink_at.is_dir():
+    print(f'{symlink_at}:'
+          ' Specified symlink at path exists but is not a directory',
+          file=sys.stderr)
+    sys.exit(errno.ENOTDIR)
+
+name = Path(command).name
+for permutation in itertools.permutations([c for c in name]):
+    permutation = ''.join(permutation)
+    if permutation == name:
+        continue
+    if shutil.which(permutation):
+        print(f"'{permutation}' command exists. Skipping...")
+    else:
+        permutation_path = symlink_at / permutation
+        permutation_path.symlink_to(command)
+        permutation_path.resolve()
+        print(f"'{permutation}' created in {symlink_at} symlinks to {command}")
