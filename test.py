@@ -37,6 +37,10 @@ def run(args):
     return subprocess.run(args, capture_output=True, text=True)
 
 
+def symlinked(source, target):
+    return source.is_symlink() and source.resolve() == target
+
+
 class SymlinkPermuteTests(unittest.TestCase):
 
     def test_fail_if_command_not_found(self):
@@ -55,9 +59,7 @@ class SymlinkPermuteTests(unittest.TestCase):
         self.assertEqual(r.returncode, 0)
 
         link = bin / 'sl'
-        self.assertTrue(link.exists())
-        self.assertTrue(link.is_symlink())
-        self.assertEqual(link.resolve(), Path('/bin/ls'))
+        self.assertTrue(symlinked(link, Path('/bin/ls')))
 
         link.unlink()
 
@@ -73,9 +75,7 @@ class SymlinkPermuteTests(unittest.TestCase):
         self.assertEqual(r.returncode, 0)
 
         link = bin / 'mr'
-        self.assertTrue(link.exists())
-        self.assertTrue(link.is_symlink())
-        self.assertEqual(link.resolve(), Path('/bin/rm'))
+        self.assertTrue(symlinked(link, Path('/bin/rm')))
 
         link.unlink()
 
@@ -91,9 +91,7 @@ class SymlinkPermuteTests(unittest.TestCase):
         self.assertEqual(r.returncode, 0)
 
         link = bin / 'vm'
-        self.assertTrue(link.exists())
-        self.assertTrue(link.is_symlink())
-        self.assertEqual(link.resolve(), Path('/bin/mv'))
+        self.assertTrue(symlinked(link, Path('/bin/mv')))
 
         r = run(['./symlink_permute_cmd', 'vm'])
         self.assertEqual(r.returncode, 0)
@@ -113,9 +111,7 @@ class SymlinkPermuteTests(unittest.TestCase):
         self.assertEqual(r.returncode, 0)
 
         link = symlink_at / 'hs'
-        self.assertTrue(link.exists())
-        self.assertTrue(link.is_symlink())
-        self.assertEqual(link.resolve(), Path('/bin/sh'))
+        self.assertTrue(symlinked(link, Path('/bin/sh')))
 
         link.unlink()
 
@@ -132,9 +128,7 @@ class SymlinkPermuteTests(unittest.TestCase):
         self.assertEqual(r.returncode, 0)
 
         link = symlink_at / 'pc'
-        self.assertTrue(link.exists())
-        self.assertTrue(link.is_symlink())
-        self.assertEqual(link.resolve(), Path('/bin/cp'))
+        self.assertTrue(symlinked(link, Path('/bin/cp')))
 
         link.unlink()
         symlink_at.rmdir()
