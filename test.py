@@ -89,6 +89,7 @@ class SymlinkPermuteTests(unittest.TestCase):
         self.assertEqual(r.returncode, 0)
 
         link = bin / 'vm'
+        self.assertTrue(link.exists())
         self.assertEqual(link.resolve(), Path('/bin/mv'))
 
         r = run(['./symlink_permute_cmd', 'vm'])
