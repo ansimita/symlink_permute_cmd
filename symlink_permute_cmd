@@ -23,7 +23,6 @@
 from pathlib import Path
 
 import argparse
-import errno
 import itertools
 import shutil
 import sys
@@ -55,7 +54,7 @@ if not symlink_at.is_dir():
     print(f'{symlink_at}:'
           ' Specified symlink at path exists but is not a directory',
           file=sys.stderr)
-    sys.exit(errno.ENOTDIR)
+    sys.exit(1)
 
 name = Path(command).name
 for permutation in itertools.permutations([c for c in name]):

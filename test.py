@@ -20,7 +20,6 @@
 
 from pathlib import Path
 
-import errno
 import shutil
 import subprocess
 import unittest
@@ -138,7 +137,7 @@ class SymlinkPermuteTests(unittest.TestCase):
         symlink_at.touch()
 
         r = run(['./symlink_permute_cmd', 'dd', '-s', f'{symlink_at}'])
-        self.assertEqual(r.returncode, errno.ENOTDIR)
+        self.assertEqual(r.returncode, 1)
         self.assertEqual(r.stderr, f'{symlink_at}:'
                          ' Specified symlink at path exists but is'
                          ' not a directory\n')
