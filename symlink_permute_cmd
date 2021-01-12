@@ -57,7 +57,7 @@ if not symlink_at.is_dir():
     sys.exit(1)
 
 name = Path(command).name
-for permutation in itertools.permutations([c for c in name]):
+for permutation in itertools.permutations(c for c in name):
     permutation = ''.join(permutation)
     if permutation == name:
         continue
